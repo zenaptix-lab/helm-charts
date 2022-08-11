@@ -44,6 +44,20 @@ spec:
     {{- end }}
     {{- end }}
   {{- end }}
+
+  {{- if .Values.extraVolumeClaimTemplates }}
+  {{- if not .Values.persistence.enabled }}
+  volumeClaimTemplates:
+  {{- end }}
+  # Currently some extra blocks accept strings
+  # to continue with backwards compatibility this is being kept
+  # whilst also allowing for yaml to be specified too.
+    {{- if eq "string" (printf "%T" .Values.extraVolumeClaimTemplates) }}
+{{ tpl .Values.extraVolumeClaimTemplates . | indent 2 }}
+    {{- else }}
+{{ toYaml .Values.extraVolumeClaimTemplates | indent 2 }}
+    {{- end }}
+  {{- end }}
   template:
     metadata:
       name: "{{ template "opensearch.uname" . }}"
